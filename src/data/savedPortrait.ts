@@ -1,6 +1,4 @@
 /**
- * Permanent portrait storage.
- * Automatically populated from the uploaded profile photo so it persists across
- * builds and deployments without any "Change Photo" UI.
+ * Permanent portrait asset path stored in /public/profile-photo.png
  */
-export const SAVED_PORTRAIT_DATA_URL: string = '';
+export const SAVED_PORTRAIT_DATA_URL: string = '/profile-photo.png';

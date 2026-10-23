@@ -91,8 +91,8 @@ export const PORTFOLIO_DATA = {
       'Ph.D. Finance',
       'Advocate High Court',
     ],
-    // Replace empty string with "/your-photo.jpg" (placed inside the /public folder) when ready:
-    portraitUrl: '',
+    // Permanent profile portrait stored in /public/profile-photo.png:
+    portraitUrl: '/profile-photo.png',
     portraitPlaceholderLabel: 'Profile Photo',
   },
 
