@@ -63,12 +63,12 @@ export const CareerTimeline: React.FC = () => {
                     aria-hidden="true"
                     initial={{ scale: 0, opacity: 0 }}
                     whileInView={{ scale: 1, opacity: 1 }}
-                    viewport={{ once: true, margin: '-40px' }}
+                    viewport={{ once: true, margin: '-20px' }}
                     transition={{
                       type: 'spring',
                       stiffness: 320,
                       damping: 20,
-                      delay: 0.08,
+                      delay: 0.06,
                     }}
                     className="absolute -left-4 sm:-left-6 md:left-1/2 md:-translate-x-1/2 top-6 w-4 h-4 rounded-full border-2 z-10"
                     style={{
@@ -80,21 +80,21 @@ export const CareerTimeline: React.FC = () => {
                     }}
                   />
 
-                  {/* Alternating Slide-In Card */}
+                  {/* Responsive Slide-In Card */}
                   <motion.div
                     initial={{
                       opacity: 0,
-                      y: 28,
-                      x: isEven ? -24 : 24,
+                      y: 26,
+                      scale: 0.97,
                     }}
                     whileInView={{
                       opacity: 1,
                       y: 0,
-                      x: 0,
+                      scale: 1,
                     }}
-                    viewport={{ once: true, margin: '-50px' }}
+                    viewport={{ once: true, margin: '-20px' }}
                     transition={{
-                      duration: 0.6,
+                      duration: 0.55,
                       delay: 0.05,
                       ease: [0.16, 1, 0.3, 1],
                     }}
@@ -102,7 +102,7 @@ export const CareerTimeline: React.FC = () => {
                       isEven ? 'md:pr-2' : 'md:pl-2'
                     }`}
                   >
-                    <TiltCard className="p-6 sm:p-7">
+                    <TiltCard className="p-5 sm:p-7">
                       <div className="flex flex-wrap items-center justify-between gap-2 mb-2.5">
                         <span
                           className="text-xs font-mono-num font-semibold tracking-wider uppercase"

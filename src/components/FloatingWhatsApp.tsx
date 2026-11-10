@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import { MessageCircle, Send, X } from 'lucide-react';
 import { PORTFOLIO_DATA } from '../data/portfolioData';
 
@@ -10,7 +10,6 @@ const QUICK_TOPICS = [
 ];
 
 export const FloatingWhatsApp: React.FC = () => {
-  const prefersReducedMotion = useReducedMotion();
   const [isOpen, setIsOpen] = useState(false);
   const [customText, setCustomText] = useState('');
   const [isHovered, setIsHovered] = useState(false);
@@ -34,8 +33,8 @@ export const FloatingWhatsApp: React.FC = () => {
   };
 
   return (
-    <div className="fixed bottom-5 right-5 sm:bottom-7 sm:right-7 z-[65] flex flex-col items-end">
-      {/* Expandable Quick WhatsApp Drawer */}
+    <div className="fixed bottom-4 right-4 sm:bottom-7 sm:right-7 z-[65] flex flex-col items-end">
+      {/* Expandable Quick WhatsApp Drawer (Mobile & Desktop Responsive) */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -43,7 +42,7 @@ export const FloatingWhatsApp: React.FC = () => {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 16, scale: 0.92 }}
             transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
-            className="mb-3.5 w-[310px] sm:w-[340px] rounded-[22px] border overflow-hidden theme-surface"
+            className="mb-3.5 w-[calc(100vw-2rem)] max-w-[340px] rounded-[22px] border overflow-hidden theme-surface"
             style={{
               backgroundColor: 'var(--bg-card)',
               borderColor: 'var(--border-strong)',
@@ -75,7 +74,7 @@ export const FloatingWhatsApp: React.FC = () => {
                 type="button"
                 onClick={() => setIsOpen(false)}
                 aria-label="Close WhatsApp chat widget"
-                className="w-7 h-7 rounded-full bg-black/15 hover:bg-black/25 flex items-center justify-center transition-colors cursor-pointer"
+                className="w-8 h-8 rounded-full bg-black/15 hover:bg-black/25 flex items-center justify-center transition-colors cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -110,7 +109,7 @@ export const FloatingWhatsApp: React.FC = () => {
                     key={item.label}
                     type="button"
                     onClick={() => openWhatsAppWithText(item.msg)}
-                    className="w-full text-left px-3.5 py-2.5 rounded-xl border text-xs font-medium transition-transform duration-150 hover:translate-x-1 cursor-pointer flex items-center justify-between gap-2"
+                    className="w-full text-left px-3.5 py-2.5 rounded-xl border text-xs font-medium transition-transform duration-150 hover:translate-x-1 active:scale-[0.98] cursor-pointer flex items-center justify-between gap-2"
                     style={{
                       backgroundColor: 'var(--bg-card-elevated)',
                       borderColor: 'var(--border-subtle)',
@@ -131,7 +130,7 @@ export const FloatingWhatsApp: React.FC = () => {
                   onChange={(e) => setCustomText(e.target.value)}
                   placeholder="Write your message..."
                   aria-label="Custom WhatsApp message"
-                  className="flex-1 px-3.5 py-2 rounded-xl border text-xs"
+                  className="flex-1 px-3.5 py-2.5 rounded-xl border text-xs"
                   style={{
                     backgroundColor: 'var(--bg-card-elevated)',
                     borderColor: 'var(--border-strong)',
@@ -141,7 +140,7 @@ export const FloatingWhatsApp: React.FC = () => {
                 <button
                   type="submit"
                   aria-label="Send on WhatsApp"
-                  className="px-3.5 py-2 rounded-xl text-white text-xs font-semibold inline-flex items-center gap-1.5 cursor-pointer shrink-0"
+                  className="px-3.5 py-2.5 rounded-xl text-white text-xs font-semibold inline-flex items-center gap-1.5 cursor-pointer shrink-0"
                   style={{ backgroundColor: '#25D366' }}
                 >
                   <span>Chat</span>
@@ -178,17 +177,11 @@ export const FloatingWhatsApp: React.FC = () => {
           )}
         </AnimatePresence>
 
-        {/* Main Floating Button */}
+        {/* Main Floating Button (Always Animated on Mobile & Desktop) */}
         <motion.div
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
-          animate={
-            prefersReducedMotion
-              ? {}
-              : {
-                  y: [0, -7, 0],
-                }
-          }
+          animate={{ y: [0, -7, 0] }}
           transition={{
             duration: 3.2,
             repeat: Infinity,
@@ -197,28 +190,26 @@ export const FloatingWhatsApp: React.FC = () => {
           className="relative"
         >
           {/* Animated Expanding Aura Ring */}
-          {!prefersReducedMotion && (
-            <motion.span
-              aria-hidden="true"
-              animate={{
-                scale: [1, 1.45, 1.55],
-                opacity: [0.45, 0.15, 0],
-              }}
-              transition={{
-                duration: 2.4,
-                repeat: Infinity,
-                ease: 'easeOut',
-              }}
-              className="absolute inset-0 rounded-full pointer-events-none"
-              style={{ backgroundColor: '#25D366' }}
-            />
-          )}
+          <motion.span
+            aria-hidden="true"
+            animate={{
+              scale: [1, 1.45, 1.55],
+              opacity: [0.45, 0.15, 0],
+            }}
+            transition={{
+              duration: 2.4,
+              repeat: Infinity,
+              ease: 'easeOut',
+            }}
+            className="absolute inset-0 rounded-full pointer-events-none"
+            style={{ backgroundColor: '#25D366' }}
+          />
 
           <motion.button
             type="button"
             onClick={() => setIsOpen((prev) => !prev)}
             whileHover={{ scale: 1.08 }}
-            whileTap={{ scale: 0.94 }}
+            whileTap={{ scale: 0.92 }}
             aria-label="Open WhatsApp chat options"
             aria-expanded={isOpen}
             className="relative w-14 h-14 sm:w-15 sm:h-15 rounded-full flex items-center justify-center text-white shadow-xl cursor-pointer"

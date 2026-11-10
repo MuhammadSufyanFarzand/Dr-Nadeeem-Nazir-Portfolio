@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { motion, useReducedMotion } from 'motion/react';
+import { motion } from 'motion/react';
 import { PORTFOLIO_DATA } from '../data/portfolioData';
 
 interface IntroLoaderProps {
@@ -7,37 +7,25 @@ interface IntroLoaderProps {
 }
 
 /**
- * Full-screen 3.0-second intro animation on every page load and refresh:
+ * Full-screen 3.0-second intro animation on every page load and refresh
+ * across both mobile and desktop:
  * 1. 0.0–0.8s: "NN" monogram draws itself with SVG stroke animation.
  * 2. 0.8–1.8s: "Dr. Nadeem Nazir" reveals letter by letter; subtitle fades in under it.
  * 3. 1.8–2.4s: Thin gold progress line fills from 0% to 100%.
  * 4. 2.4–3.0s: Loader splits into two panels (top & bottom curtain) revealing the hero.
  */
 export const IntroLoader: React.FC<IntroLoaderProps> = ({ onComplete }) => {
-  const prefersReducedMotion = useReducedMotion();
   const [isSplitting, setIsSplitting] = useState(false);
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    // Lock page scroll while loader is active
     const originalOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
-
-    if (prefersReducedMotion) {
-      const quickTimer = window.setTimeout(() => {
-        document.body.style.overflow = originalOverflow;
-        onComplete();
-      }, 400);
-      return () => {
-        window.clearTimeout(quickTimer);
-        document.body.style.overflow = originalOverflow;
-      };
-    }
 
     // Progress counter between 1.8s and 2.4s
     const startProgressTimeout = window.setTimeout(() => {
       const startTime = performance.now();
-      const duration = 600; // 1.8s -> 2.4s
+      const duration = 600;
 
       const tick = (now: number) => {
         const elapsed = now - startTime;
@@ -67,7 +55,7 @@ export const IntroLoader: React.FC<IntroLoaderProps> = ({ onComplete }) => {
       window.clearTimeout(completeTimeout);
       document.body.style.overflow = originalOverflow;
     };
-  }, [onComplete, prefersReducedMotion]);
+  }, [onComplete]);
 
   const nameLetters = PORTFOLIO_DATA.profile.name.split('');
 
@@ -89,7 +77,7 @@ export const IntroLoader: React.FC<IntroLoaderProps> = ({ onComplete }) => {
         }}
       >
         <div
-          className="absolute -top-24 left-1/2 -translate-x-1/2 w-[32rem] h-[32rem] rounded-full blur-3xl pointer-events-none"
+          className="absolute -top-20 left-1/2 -translate-x-1/2 w-72 sm:w-[32rem] h-72 sm:h-[32rem] rounded-full blur-3xl pointer-events-none"
           style={{ background: 'var(--orb-blue)' }}
         />
       </motion.div>
@@ -106,32 +94,31 @@ export const IntroLoader: React.FC<IntroLoaderProps> = ({ onComplete }) => {
         }}
       >
         <div
-          className="absolute -bottom-24 left-1/2 -translate-x-1/2 w-[32rem] h-[32rem] rounded-full blur-3xl pointer-events-none"
+          className="absolute -bottom-20 left-1/2 -translate-x-1/2 w-72 sm:w-[32rem] h-72 sm:h-[32rem] rounded-full blur-3xl pointer-events-none"
           style={{ background: 'var(--orb-gold)' }}
         />
       </motion.div>
 
-      {/* Center Stage Content (Fades & scales slightly as curtains part at 2.4s) */}
+      {/* Center Stage Content */}
       <motion.div
         initial={{ opacity: 1, scale: 1 }}
         animate={{
           opacity: isSplitting ? 0 : 1,
-          scale: isSplitting ? 0.96 : 1,
+          scale: isSplitting ? 0.95 : 1,
         }}
         transition={{ duration: 0.4, ease: 'easeInOut' }}
-        className="fixed inset-0 z-[101] flex flex-col items-center justify-center px-6 text-center pointer-events-none"
+        className="fixed inset-0 z-[101] flex flex-col items-center justify-center px-5 text-center pointer-events-none"
       >
         {/* 1. 0.0–0.8s: SVG Monogram "NN" draws itself */}
-        <div className="relative mb-7">
+        <div className="relative mb-6 sm:mb-7">
           <svg
-            width="108"
-            height="108"
+            width="96"
+            height="96"
             viewBox="0 0 120 120"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
-            className="overflow-visible"
+            className="w-24 h-24 sm:w-28 sm:h-28 overflow-visible"
           >
-            {/* Outer Octagonal/Circular Crest Frame */}
             <motion.circle
               cx="60"
               cy="60"
@@ -194,7 +181,7 @@ export const IntroLoader: React.FC<IntroLoaderProps> = ({ onComplete }) => {
                 delay: 0.8 + idx * 0.038,
                 ease: [0.16, 1, 0.3, 1],
               }}
-              className={char === ' ' ? 'w-2.5 sm:w-3.5' : 'inline-block'}
+              className={char === ' ' ? 'w-2 sm:w-3.5' : 'inline-block'}
             >
               {char}
             </motion.span>
@@ -206,14 +193,14 @@ export const IntroLoader: React.FC<IntroLoaderProps> = ({ onComplete }) => {
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.55, delay: 1.15, ease: 'easeOut' }}
-          className="text-xs sm:text-sm md:text-base max-w-xl font-medium tracking-wide"
+          className="text-xs sm:text-sm md:text-base max-w-md sm:max-w-xl font-medium tracking-wide px-2"
           style={{ color: 'var(--text-secondary)' }}
         >
           Professor of Accounting, Finance, Law &amp; Information Technology
         </motion.p>
 
         {/* 3. 1.8–2.4s: Thin gold progress line fills from 0 to 100% */}
-        <div className="mt-8 w-64 sm:w-80 flex flex-col items-center">
+        <div className="mt-7 sm:mt-8 w-56 sm:w-80 flex flex-col items-center">
           <div
             className="w-full h-[2px] rounded-full overflow-hidden relative"
             style={{ backgroundColor: 'var(--border-subtle)' }}

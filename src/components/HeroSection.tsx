@@ -4,7 +4,6 @@ import {
   useMotionValue,
   useSpring,
   useTransform,
-  useReducedMotion,
 } from 'motion/react';
 import { ArrowDown, ArrowRight, BookOpen, Linkedin } from 'lucide-react';
 import { PORTFOLIO_DATA } from '../data/portfolioData';
@@ -13,7 +12,6 @@ import { AnimatedCounter, MagneticButton, TiltCard } from './MotionPrimitives';
 
 export const HeroSection: React.FC = () => {
   const { profile, stats, contact } = PORTFOLIO_DATA;
-  const prefersReducedMotion = useReducedMotion();
   const [disciplineIndex, setDisciplineIndex] = useState(0);
   const [typedText, setTypedText] = useState(profile.rotatingDisciplines[0]);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -30,7 +28,7 @@ export const HeroSection: React.FC = () => {
     return '';
   });
 
-  // Interactive mouse parallax for the portrait assembly
+  // Interactive mouse & touch parallax for the portrait assembly
   const pointerX = useMotionValue(0);
   const pointerY = useMotionValue(0);
   const smoothPointerX = useSpring(pointerX, { stiffness: 120, damping: 20 });
@@ -38,7 +36,6 @@ export const HeroSection: React.FC = () => {
   const badgeOffsetReverseX = useTransform(smoothPointerX, (v) => -v * 0.7);
   const badgeOffsetReverseY = useTransform(smoothPointerY, (v) => -v * 0.7);
 
-  // Automatically persist the uploaded photo into the codebase if not already saved
   useEffect(() => {
     if (SAVED_PORTRAIT_DATA_URL) {
       setPermanentPhoto(SAVED_PORTRAIT_DATA_URL);
@@ -52,25 +49,14 @@ export const HeroSection: React.FC = () => {
       const saved = localStorage.getItem('nn_portfolio_preview_photo');
       if (saved) {
         setPermanentPhoto(saved);
-        // Persist into src/data/savedPortrait.ts via dev server middleware
-        fetch('/api/save-portrait', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ dataUrl: saved }),
-        }).catch(() => {});
       }
     } catch {
       // Ignore storage errors
     }
   }, [profile.portraitUrl]);
 
-  // Smooth typewriter animation for Accounting | Finance | Law | Information Technology
+  // Smooth typewriter animation for Accounting | Finance | Law | Information Technology (Active on Mobile & Desktop)
   useEffect(() => {
-    if (prefersReducedMotion) {
-      setTypedText(profile.rotatingDisciplines[disciplineIndex]);
-      return;
-    }
-
     const fullWord = profile.rotatingDisciplines[disciplineIndex];
     const typeSpeed = isDeleting ? 42 : 78;
 
@@ -90,19 +76,22 @@ export const HeroSection: React.FC = () => {
     }, typeSpeed);
 
     return () => window.clearTimeout(timer);
-  }, [
-    typedText,
-    isDeleting,
-    disciplineIndex,
-    profile.rotatingDisciplines,
-    prefersReducedMotion,
-  ]);
+  }, [typedText, isDeleting, disciplineIndex, profile.rotatingDisciplines]);
 
   const handleHeroMouseMove = (e: React.MouseEvent<HTMLElement>) => {
-    if (prefersReducedMotion) return;
     const { innerWidth, innerHeight } = window;
     const xOffset = ((e.clientX - innerWidth / 2) / innerWidth) * 22;
     const yOffset = ((e.clientY - innerHeight / 2) / innerHeight) * 22;
+    pointerX.set(xOffset);
+    pointerY.set(yOffset);
+  };
+
+  const handleHeroTouchMove = (e: React.TouchEvent<HTMLElement>) => {
+    const touch = e.touches[0];
+    if (!touch) return;
+    const { innerWidth, innerHeight } = window;
+    const xOffset = ((touch.clientX - innerWidth / 2) / innerWidth) * 16;
+    const yOffset = ((touch.clientY - innerHeight / 2) / innerHeight) * 16;
     pointerX.set(xOffset);
     pointerY.set(yOffset);
   };
@@ -113,25 +102,26 @@ export const HeroSection: React.FC = () => {
     <section
       id="home"
       onMouseMove={handleHeroMouseMove}
-      className="relative pt-28 sm:pt-36 pb-16 md:pb-24 overflow-hidden"
+      onTouchMove={handleHeroTouchMove}
+      className="relative pt-24 sm:pt-32 md:pt-36 pb-14 sm:pb-16 md:pb-24 overflow-hidden"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Split-Screen Hero Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-10 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-10 items-center">
           {/* Left Column: Typographic Hierarchy */}
-          <div className="lg:col-span-7 space-y-6">
+          <div className="lg:col-span-7 space-y-5 sm:space-y-6">
             {/* Small Kicker Label */}
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
-              className="flex items-center gap-3"
+              className="flex items-center gap-2.5 sm:gap-3"
             >
               <motion.span
                 initial={{ scaleX: 0 }}
                 animate={{ scaleX: 1 }}
                 transition={{ duration: 0.6, delay: 0.1 }}
-                className="w-8 h-[1.5px] origin-left inline-block"
+                className="w-6 sm:w-8 h-[1.5px] origin-left inline-block shrink-0"
                 style={{ backgroundColor: 'var(--accent-gold)' }}
               />
               <p
@@ -142,10 +132,10 @@ export const HeroSection: React.FC = () => {
               </p>
             </motion.div>
 
-            {/* Big Heading with Word-by-Word Masked Reveal */}
+            {/* Big Heading with Word-by-Word Masked Reveal + Credentials */}
             <div className="space-y-3">
               <h1
-                className="font-serif-display text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.08] flex flex-wrap gap-x-3.5"
+                className="font-serif-display text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.1] flex flex-wrap gap-x-2.5 sm:gap-x-3.5"
                 style={{ color: 'var(--text-primary)' }}
               >
                 {heroNameWords.map((word, i) => (
@@ -170,7 +160,7 @@ export const HeroSection: React.FC = () => {
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
-                className="pt-1 flex flex-wrap items-center gap-2 sm:gap-2.5"
+                className="pt-1 flex flex-wrap items-center gap-1.5 sm:gap-2.5"
               >
                 {profile.credentials.split(';').map((cred, index) => {
                   const cleanCred = cred.trim();
@@ -185,7 +175,8 @@ export const HeroSection: React.FC = () => {
                         ease: [0.16, 1, 0.3, 1],
                       }}
                       whileHover={{ y: -2, scale: 1.03 }}
-                      className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl border text-xs sm:text-sm font-serif-display font-semibold tracking-wide theme-surface shadow-xs"
+                      whileTap={{ scale: 0.96 }}
+                      className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-3.5 py-1.5 rounded-xl border text-xs sm:text-sm font-serif-display font-semibold tracking-wide theme-surface shadow-xs"
                       style={{
                         backgroundColor: 'var(--bg-card)',
                         borderColor: 'var(--border-strong)',
@@ -214,13 +205,13 @@ export const HeroSection: React.FC = () => {
               className="space-y-2.5"
             >
               <h2
-                className="text-lg sm:text-xl md:text-2xl font-semibold leading-snug [text-wrap:balance]"
+                className="text-base sm:text-xl md:text-2xl font-semibold leading-snug [text-wrap:balance]"
                 style={{ color: 'var(--text-primary)' }}
               >
                 {profile.title}
               </h2>
 
-              <div className="flex items-center gap-2 text-sm sm:text-base font-medium min-h-[30px]">
+              <div className="flex flex-wrap items-center gap-2 text-sm sm:text-base font-medium min-h-[30px]">
                 <span style={{ color: 'var(--text-muted)' }}>
                   Specialized Authority in:
                 </span>
@@ -247,7 +238,7 @@ export const HeroSection: React.FC = () => {
             >
               <TiltCard className="p-4 sm:p-5">
                 <p
-                  className="text-sm sm:text-base font-medium leading-relaxed"
+                  className="text-xs sm:text-base font-medium leading-relaxed"
                   style={{ color: 'var(--text-primary)' }}
                 >
                   {profile.currentRoleLine}
@@ -260,7 +251,7 @@ export const HeroSection: React.FC = () => {
               initial={{ opacity: 0, y: 18 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.42, ease: [0.16, 1, 0.3, 1] }}
-              className="text-base sm:text-lg leading-relaxed max-w-2xl"
+              className="text-sm sm:text-lg leading-relaxed max-w-2xl"
               style={{ color: 'var(--text-secondary)' }}
             >
               {profile.heroIntro}
@@ -271,7 +262,7 @@ export const HeroSection: React.FC = () => {
               initial={{ opacity: 0, y: 18 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.48, ease: [0.16, 1, 0.3, 1] }}
-              className="flex flex-wrap items-center gap-4 pt-2"
+              className="flex flex-wrap items-center gap-3 sm:gap-4 pt-1 sm:pt-2"
             >
               <MagneticButton href="#contact" variant="primary">
                 <span>Get in Touch</span>
@@ -307,9 +298,14 @@ export const HeroSection: React.FC = () => {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8, delay: 0.22, ease: [0.16, 1, 0.3, 1] }}
             style={{ x: smoothPointerX, y: smoothPointerY }}
-            className="lg:col-span-5 flex flex-col items-center justify-center relative py-6"
+            className="lg:col-span-5 flex flex-col items-center justify-center relative py-4 sm:py-6"
           >
-            <div className="relative w-72 h-72 sm:w-88 sm:h-88 md:w-96 md:h-96 flex items-center justify-center">
+            {/* Continuous Gentle Floating Sway on Mobile & Desktop */}
+            <motion.div
+              animate={{ y: [0, -8, 0] }}
+              transition={{ duration: 5.5, repeat: Infinity, ease: 'easeInOut' }}
+              className="relative w-[276px] h-[276px] sm:w-88 sm:h-88 md:w-96 md:h-96 flex items-center justify-center"
+            >
               {/* Soft Breathing Halo Glow Behind Portrait */}
               <motion.div
                 aria-hidden="true"
@@ -318,7 +314,7 @@ export const HeroSection: React.FC = () => {
                   opacity: [0.35, 0.6, 0.35],
                 }}
                 transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
-                className="absolute inset-6 rounded-full blur-2xl pointer-events-none"
+                className="absolute inset-4 sm:inset-6 rounded-full blur-2xl pointer-events-none"
                 style={{
                   background:
                     'radial-gradient(circle, var(--accent-gold-soft) 0%, var(--accent-primary-soft) 65%, transparent 100%)',
@@ -344,7 +340,7 @@ export const HeroSection: React.FC = () => {
               {/* Inner Counter-Rotating Ring */}
               <div
                 aria-hidden="true"
-                className="absolute inset-5 rounded-full border animate-orbit-reverse-slow pointer-events-none opacity-60"
+                className="absolute inset-4 sm:inset-5 rounded-full border animate-orbit-reverse-slow pointer-events-none opacity-60"
                 style={{ borderColor: 'var(--border-strong)' }}
               >
                 <span
@@ -353,11 +349,12 @@ export const HeroSection: React.FC = () => {
                 />
               </div>
 
-              {/* Permanent Circular Portrait Frame (No Change/Upload Options) */}
+              {/* Permanent Circular Portrait Frame */}
               <motion.div
                 whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
                 transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                className="relative w-56 h-56 sm:w-68 sm:h-68 md:w-72 md:h-72 rounded-full overflow-hidden flex flex-col items-center justify-center text-center p-6 select-none"
+                className="relative w-52 h-52 sm:w-68 sm:h-68 md:w-72 md:h-72 rounded-full overflow-hidden flex flex-col items-center justify-center text-center p-6 select-none"
                 style={{
                   backgroundColor: 'var(--bg-card)',
                   border: '2px solid var(--accent-gold)',
@@ -382,11 +379,10 @@ export const HeroSection: React.FC = () => {
                       }}
                     />
 
-                    {/* Elegant Monogram "NN" */}
                     <motion.span
                       animate={{ scale: [1, 1.03, 1] }}
                       transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-                      className="font-serif-display text-6xl sm:text-7xl font-bold tracking-tight select-none relative z-10"
+                      className="font-serif-display text-5xl sm:text-7xl font-bold tracking-tight select-none relative z-10"
                       style={{ color: 'var(--text-primary)' }}
                     >
                       {profile.monogram}
@@ -409,11 +405,11 @@ export const HeroSection: React.FC = () => {
 
               {/* Floating Badge 1: "32+ Years" */}
               <motion.div
-                style={{ x: badgeOffsetReverseX, y: badgeOffsetReverseY }}
                 animate={{ y: [0, -7, 0] }}
                 transition={{ duration: 4.2, repeat: Infinity, ease: 'easeInOut' }}
-                className="absolute top-3 -left-2 sm:left-0 px-4 py-2 rounded-2xl border text-xs sm:text-sm font-semibold whitespace-nowrap shrink-0 theme-surface"
+                className="absolute top-2 left-0 px-3 sm:px-4 py-1.5 sm:py-2 rounded-2xl border text-[11px] sm:text-sm font-semibold whitespace-nowrap shrink-0 theme-surface z-20"
                 style={{
+                  x: badgeOffsetReverseX,
                   backgroundColor: 'var(--bg-card)',
                   borderColor: 'var(--accent-gold)',
                   color: 'var(--text-primary)',
@@ -425,7 +421,6 @@ export const HeroSection: React.FC = () => {
 
               {/* Floating Badge 2: "Ph.D. Finance" */}
               <motion.div
-                style={{ x: badgeOffsetReverseX, y: badgeOffsetReverseY }}
                 animate={{ y: [0, 7, 0] }}
                 transition={{
                   duration: 4.8,
@@ -433,8 +428,9 @@ export const HeroSection: React.FC = () => {
                   ease: 'easeInOut',
                   delay: 0.4,
                 }}
-                className="absolute top-12 -right-2 sm:right-0 px-4 py-2 rounded-2xl border text-xs sm:text-sm font-semibold whitespace-nowrap shrink-0 theme-surface"
+                className="absolute top-10 right-0 px-3 sm:px-4 py-1.5 sm:py-2 rounded-2xl border text-[11px] sm:text-sm font-semibold whitespace-nowrap shrink-0 theme-surface z-20"
                 style={{
+                  x: badgeOffsetReverseX,
                   backgroundColor: 'var(--bg-card)',
                   borderColor: 'var(--accent-primary)',
                   color: 'var(--text-primary)',
@@ -453,7 +449,7 @@ export const HeroSection: React.FC = () => {
                   ease: 'easeInOut',
                   delay: 0.8,
                 }}
-                className="absolute bottom-3 left-1/2 -translate-x-1/2 px-4 py-2 rounded-2xl border text-xs sm:text-sm font-semibold whitespace-nowrap shrink-0 theme-surface"
+                className="absolute bottom-2 left-1/2 -translate-x-1/2 px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-2xl border text-[11px] sm:text-sm font-semibold whitespace-nowrap shrink-0 theme-surface z-20"
                 style={{
                   backgroundColor: 'var(--bg-card)',
                   borderColor: 'var(--border-strong)',
@@ -463,37 +459,37 @@ export const HeroSection: React.FC = () => {
               >
                 {profile.floatingBadges[2]}
               </motion.div>
-            </div>
+            </motion.div>
           </motion.div>
         </div>
 
         {/* Section 2: Full-Width Animated Stats Strip */}
         <div
-          className="mt-16 sm:mt-20 pt-10 border-t"
+          className="mt-12 sm:mt-20 pt-8 sm:pt-10 border-t"
           style={{ borderColor: 'var(--border-subtle)' }}
         >
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             {stats.map((stat, idx) => (
               <motion.div
                 key={stat.id}
                 initial={{ opacity: 0, y: 26 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-40px' }}
+                viewport={{ once: true, margin: '-20px' }}
                 transition={{
                   duration: 0.55,
-                  delay: idx * 0.09,
+                  delay: idx * 0.08,
                   ease: [0.16, 1, 0.3, 1],
                 }}
               >
-                <TiltCard className="p-6 h-full flex flex-col justify-between">
+                <TiltCard className="p-5 sm:p-6 h-full flex flex-col justify-between">
                   <div
-                    className="text-4xl sm:text-5xl font-bold tracking-tight mb-3"
+                    className="text-3xl sm:text-5xl font-bold tracking-tight mb-2 sm:mb-3"
                     style={{ color: 'var(--accent-primary)' }}
                   >
                     <AnimatedCounter value={stat.value} suffix={stat.suffix} />
                   </div>
                   <p
-                    className="text-sm leading-relaxed"
+                    className="text-xs sm:text-sm leading-relaxed"
                     style={{ color: 'var(--text-secondary)' }}
                   >
                     {stat.label}
@@ -505,7 +501,7 @@ export const HeroSection: React.FC = () => {
         </div>
 
         {/* Scroll-Down Indicator */}
-        <div className="mt-12 flex justify-center">
+        <div className="mt-10 sm:mt-12 flex justify-center">
           <a
             href="#about"
             aria-label="Scroll down to About section"

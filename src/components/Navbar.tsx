@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence, useScroll, useSpring } from 'motion/react';
-import { Menu, X } from 'lucide-react';
+import { Linkedin, Mail, Menu, MessageCircle, X } from 'lucide-react';
 import { PORTFOLIO_DATA } from '../data/portfolioData';
 
 interface NavbarProps {
@@ -70,7 +70,7 @@ export const Navbar: React.FC<NavbarProps> = ({ theme, onToggleTheme }) => {
 
       <header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          isScrolled ? 'py-3 shadow-sm' : 'py-4'
+          isScrolled ? 'py-2.5 sm:py-3 shadow-sm' : 'py-3.5 sm:py-4'
         }`}
         style={{
           backgroundColor: 'var(--bg-glass)',
@@ -79,15 +79,15 @@ export const Navbar: React.FC<NavbarProps> = ({ theme, onToggleTheme }) => {
           borderBottom: '1px solid var(--border-subtle)',
         }}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-3 sm:gap-6">
           {/* Zone 1: Brand Monogram + Name */}
           <a
             href="#home"
-            className="flex items-center gap-3 whitespace-nowrap shrink-0 group"
+            className="flex items-center gap-2.5 sm:gap-3 whitespace-nowrap shrink-0 group"
             aria-label="Dr. Nadeem Nazir — Home"
           >
             <span
-              className="w-10 h-10 rounded-xl flex items-center justify-center font-serif-display font-bold text-base tracking-tight transition-transform duration-200 group-hover:scale-105"
+              className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center font-serif-display font-bold text-sm sm:text-base tracking-tight transition-transform duration-200 group-hover:scale-105"
               style={{
                 backgroundColor: 'var(--bg-card)',
                 border: '1px solid var(--accent-gold)',
@@ -97,7 +97,7 @@ export const Navbar: React.FC<NavbarProps> = ({ theme, onToggleTheme }) => {
               {PORTFOLIO_DATA.profile.monogram}
             </span>
             <span
-              className="font-serif-display font-semibold text-lg tracking-tight"
+              className="font-serif-display font-semibold text-base sm:text-lg tracking-tight"
               style={{ color: 'var(--text-primary)' }}
             >
               {PORTFOLIO_DATA.profile.name}
@@ -135,11 +135,12 @@ export const Navbar: React.FC<NavbarProps> = ({ theme, onToggleTheme }) => {
             })}
           </nav>
 
-          {/* Zone 3: Theme Toggle (Sun/Moon Morph) + Contact Me CTA */}
-          <div className="flex items-center gap-3 shrink-0">
-            <button
+          {/* Zone 3: Theme Toggle (Sun/Moon Morph) + Contact Me CTA + Mobile Menu */}
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+            <motion.button
               type="button"
               onClick={onToggleTheme}
+              whileTap={{ scale: 0.9 }}
               aria-label={
                 theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'
               }
@@ -185,7 +186,7 @@ export const Navbar: React.FC<NavbarProps> = ({ theme, onToggleTheme }) => {
                   />
                 )}
               </motion.svg>
-            </button>
+            </motion.button>
 
             <a
               href="#contact"
@@ -199,8 +200,9 @@ export const Navbar: React.FC<NavbarProps> = ({ theme, onToggleTheme }) => {
             </a>
 
             {/* Mobile Hamburger Button */}
-            <button
+            <motion.button
               type="button"
+              whileTap={{ scale: 0.9 }}
               onClick={() => setMobileMenuOpen((prev) => !prev)}
               aria-label={mobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
               aria-expanded={mobileMenuOpen}
@@ -212,7 +214,7 @@ export const Navbar: React.FC<NavbarProps> = ({ theme, onToggleTheme }) => {
               }}
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-            </button>
+            </motion.button>
           </div>
         </div>
       </header>
@@ -224,15 +226,15 @@ export const Navbar: React.FC<NavbarProps> = ({ theme, onToggleTheme }) => {
             initial={{ opacity: 0, y: -16 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -16 }}
-            transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-            className="fixed inset-0 z-40 pt-24 pb-10 px-6 flex flex-col justify-between lg:hidden overflow-y-auto"
+            transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+            className="fixed inset-0 z-40 pt-20 pb-8 px-5 flex flex-col justify-between lg:hidden overflow-y-auto"
             style={{
               backgroundColor: 'var(--bg-primary)',
             }}
           >
             <nav
               aria-label="Mobile Navigation"
-              className="flex flex-col space-y-2 mt-4"
+              className="flex flex-col space-y-1 mt-2"
             >
               {PORTFOLIO_DATA.navLinks.map((link, idx) => {
                 const sectionId = link.href.replace('#', '');
@@ -242,10 +244,10 @@ export const Navbar: React.FC<NavbarProps> = ({ theme, onToggleTheme }) => {
                     key={link.href}
                     href={link.href}
                     onClick={() => setMobileMenuOpen(false)}
-                    initial={{ opacity: 0, x: -20 }}
+                    initial={{ opacity: 0, x: -24 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: idx * 0.04, duration: 0.25 }}
-                    className="font-serif-display text-2xl sm:text-3xl font-semibold py-3 border-b flex items-center justify-between"
+                    transition={{ delay: idx * 0.045, duration: 0.28 }}
+                    className="font-serif-display text-2xl font-semibold py-3 border-b flex items-center justify-between"
                     style={{
                       color: isActive ? 'var(--accent-primary)' : 'var(--text-primary)',
                       borderColor: 'var(--border-subtle)',
@@ -263,11 +265,16 @@ export const Navbar: React.FC<NavbarProps> = ({ theme, onToggleTheme }) => {
               })}
             </nav>
 
-            <div className="pt-8 space-y-4">
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.25, duration: 0.3 }}
+              className="pt-6 space-y-3"
+            >
               <a
                 href="#contact"
                 onClick={() => setMobileMenuOpen(false)}
-                className="w-full py-3.5 rounded-xl text-center font-medium text-base block"
+                className="btn-shine w-full py-3.5 rounded-xl text-center font-medium text-sm block"
                 style={{
                   backgroundColor: 'var(--accent-primary)',
                   color: '#FFFFFF',
@@ -275,13 +282,50 @@ export const Navbar: React.FC<NavbarProps> = ({ theme, onToggleTheme }) => {
               >
                 Contact Me
               </a>
-              <p
-                className="text-xs text-center"
-                style={{ color: 'var(--text-muted)' }}
-              >
-                {PORTFOLIO_DATA.profile.credentials}
-              </p>
-            </div>
+
+              <div className="grid grid-cols-3 gap-2.5">
+                <a
+                  href={PORTFOLIO_DATA.contact.whatsappUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="py-2.5 rounded-xl border text-xs font-semibold flex items-center justify-center gap-1.5"
+                  style={{
+                    backgroundColor: 'var(--bg-card)',
+                    borderColor: 'var(--border-strong)',
+                    color: 'var(--text-primary)',
+                  }}
+                >
+                  <MessageCircle className="w-3.5 h-3.5 text-[#25D366]" />
+                  <span>WhatsApp</span>
+                </a>
+                <a
+                  href={PORTFOLIO_DATA.contact.linkedinUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="py-2.5 rounded-xl border text-xs font-semibold flex items-center justify-center gap-1.5"
+                  style={{
+                    backgroundColor: 'var(--bg-card)',
+                    borderColor: 'var(--border-strong)',
+                    color: 'var(--text-primary)',
+                  }}
+                >
+                  <Linkedin className="w-3.5 h-3.5" style={{ color: 'var(--accent-primary)' }} />
+                  <span>LinkedIn</span>
+                </a>
+                <a
+                  href={`mailto:${PORTFOLIO_DATA.contact.email}`}
+                  className="py-2.5 rounded-xl border text-xs font-semibold flex items-center justify-center gap-1.5"
+                  style={{
+                    backgroundColor: 'var(--bg-card)',
+                    borderColor: 'var(--border-strong)',
+                    color: 'var(--text-primary)',
+                  }}
+                >
+                  <Mail className="w-3.5 h-3.5" style={{ color: 'var(--accent-gold)' }} />
+                  <span>Email</span>
+                </a>
+              </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>

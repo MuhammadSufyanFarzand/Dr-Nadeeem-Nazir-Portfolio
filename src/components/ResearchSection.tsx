@@ -173,7 +173,7 @@ export const ResearchSection: React.FC = () => {
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 mb-8">
           {/* Interactive Segmented Filter Controls */}
           <div
-            className="inline-flex items-center gap-1 p-1.5 rounded-xl border self-start"
+            className="flex items-center gap-1 p-1.5 rounded-xl border overflow-x-auto max-w-full"
             style={{
               backgroundColor: 'var(--bg-card)',
               borderColor: 'var(--border-subtle)',
@@ -192,7 +192,7 @@ export const ResearchSection: React.FC = () => {
                   key={tab.id}
                   type="button"
                   onClick={() => setSelectedFilter(tab.id)}
-                  className="px-3.5 py-2 rounded-lg text-xs font-medium whitespace-nowrap shrink-0 transition-colors cursor-pointer"
+                  className="px-3 sm:px-3.5 py-2 rounded-lg text-xs font-medium whitespace-nowrap shrink-0 transition-colors cursor-pointer"
                   style={{
                     backgroundColor: active ? 'var(--accent-primary)' : 'transparent',
                     color: active ? '#FFFFFF' : 'var(--text-secondary)',
